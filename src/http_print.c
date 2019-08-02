@@ -41,19 +41,27 @@
 #include "tcpip/tcpip.h"
 
 void TCPIP_HTTP_Print(HTTP_CONN_HANDLE connHandle,uint32_t callbackID);
+void TCPIP_HTTP_Print_status_fail(HTTP_CONN_HANDLE connHandle);
 void TCPIP_HTTP_Print_status_ok(HTTP_CONN_HANDLE connHandle);
 void TCPIP_HTTP_Print_file(HTTP_CONN_HANDLE connHandle);
+void TCPIP_HTTP_Print_status_file(HTTP_CONN_HANDLE connHandle);
 
 void TCPIP_HTTP_Print(HTTP_CONN_HANDLE connHandle,uint32_t callbackID)
 {
     TCP_SOCKET sktHTTP; 
     switch(callbackID)
     {
+        case 0x0000004b:
+			TCPIP_HTTP_Print_status_fail(connHandle);
+			break;
         case 0x00000056:
 			TCPIP_HTTP_Print_status_ok(connHandle);
 			break;
         case 0x00000060:
 			TCPIP_HTTP_Print_file(connHandle);
+			break;
+        case 0x00000061:
+			TCPIP_HTTP_Print_status_file(connHandle);
 			break;
         default:
             // Output notification for undefined values

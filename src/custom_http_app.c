@@ -353,11 +353,6 @@ static HTTP_IO_RESULT HTTPDeleteFiles(HTTP_CONN_HANDLE connHandle) {
             
             strcpy(file2seek, cDest);
             
-            if(SendMessage)
-                lastSuccess = true;
-            else
-                lastSuccess = false;
-
             // This is the only expected value, so callback is done
             strcpy((char *)httpDataBuff, "/delete.htm");
             TCPIP_HTTP_CurrentConnectionStatusSet(connHandle, HTTP_REDIRECT);
@@ -1680,7 +1675,7 @@ void TCPIP_HTTP_Print_file(HTTP_CONN_HANDLE connHandle){
     TCP_SOCKET sktHTTP = TCPIP_HTTP_CurrentConnectionSocketGet(connHandle);
     int dDisponibles = TCPIP_TCP_PutIsReady(sktHTTP);
     
-    if(dDisponibles > 500 && list_count > 0){
+    if(dDisponibles > 500 && list_count > 0){                                   // Ready to print to web page all the files names
         TCPIP_TCP_StringPut(sktHTTP, "<b>Archivos Encontrados:</b><br>");
 
         for(FilesFound = 0; FilesFound < list_count; FilesFound++){
@@ -1695,9 +1690,31 @@ void TCPIP_HTTP_Print_file(HTTP_CONN_HANDLE connHandle){
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
     }
     
-    else if(ReadyToPrint == false)
-        TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
+    else if(ReadyToPrint == false){                                             // Searching end with no results
+        if(list_count == 0)
+            lastFailure = true;
+        
+        TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);           
+    }
     
-    else if (ReadyToPrint == true)
+    else if (ReadyToPrint == true)                                              // Not ready but continue reading files
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x01);
+}
+
+void TCPIP_HTTP_Print_status_file(HTTP_CONN_HANDLE connHandle){
+    TCP_SOCKET sktHTTP = TCPIP_HTTP_CurrentConnectionSocketGet(connHandle);
+    
+    if(task == 0 && SendMessage == true){
+            TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)"Archivo Eliminado");
+            TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
+    }
+    else if(task == 0 && SendMessage == false){
+        TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)" ");
+        TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
+    }
+    else if(task != 0){
+        TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x01);
+    }
+    
+    SendMessage = false;
 }

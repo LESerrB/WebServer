@@ -228,7 +228,7 @@ void SDCARDCONTROL_Tasks (void){
     stat.lfname = longFileName;
     stat.lfsize = 300;
     static uint32_t     startTick = 0;
-    SendMessage = false;
+//    SendMessage = false;
 
     /* Check the application's current state. */
     switch (sdcardcontrolData.state){

@@ -73,7 +73,7 @@ read_comm(2)
 write_comm(0)
 write_comm(1)
 write_comm(2)
-status_fail
++status_fail
 config_mac
 config_hostname
 config_dhcpchecked
@@ -95,3 +95,4 @@ ddns_user
 ddns_pass
 ddns_host
 +file
++status_file
