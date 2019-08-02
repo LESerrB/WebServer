@@ -367,10 +367,9 @@ static HTTP_IO_RESULT HTTPDeleteFiles(HTTP_CONN_HANDLE connHandle) {
 // size of an email parameter
 #define HTTP_APP_DATE_PARAM_SIZE           10
 
-// handle of the mail message submitted to SMTPC
-static TCPIP_SMTPC_MESSAGE_HANDLE postDateHandle = 0;
+int postDateHandle = 1;
 
-// structure describing the post email operation
+// structure describing the post date operation
 typedef struct{
     char*   ptrParam;                                                           // pointer to the current parameter being retrieved
     int     paramSize;                                                          // size of the buffer to retrieve the parameter
@@ -389,7 +388,6 @@ static HTTP_POST_DATE_DCPT postDate;
 
 static HTTP_IO_RESULT HTTPReadDate(HTTP_CONN_HANDLE connHandle){
 
-//    TCPIP_SMTPC_MAIL_MESSAGE mySMTPMessage;
     char paramName[HTTP_APP_DATE_PARAM_SIZE + 1];
 
     #define SM_DATE_INIT                       (0)
@@ -400,10 +398,6 @@ static HTTP_IO_RESULT HTTPReadDate(HTTP_CONN_HANDLE connHandle){
 
     switch(TCPIP_HTTP_CurrentConnectionPostSmGet(connHandle)){
         case SM_DATE_INIT:
-            if(postDateHandle != 0){   // some other operation on going
-                return HTTP_IO_WAITING;
-            }
-
             memset(&postDate, 0, sizeof(postDate));
             TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_DATE_READ_PARAM_NAME);
             return HTTP_IO_WAITING;
@@ -1691,9 +1685,11 @@ void TCPIP_HTTP_Print_file(HTTP_CONN_HANDLE connHandle){
     }
     
     else if(ReadyToPrint == false){                                             // Searching end with no results
-        if(list_count == 0)
+        
+        if(postDateHandle == 0)
             lastFailure = true;
         
+        postDateHandle = 1;
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);           
     }
     
