@@ -454,25 +454,29 @@ void SDCARDCONTROL_Tasks (void){
                     SYS_FS_FilePrintf(sdcardcontrolData.fileHandle, "%s\r\n", new_file);
                 
                 SYS_FS_FileClose(sdcardcontrolData.fileHandle);
+                sdcardcontrolData.fileHandle1 = SYS_FS_FileOpen(file_path, (SYS_FS_FILE_OPEN_WRITE));
+                SYS_FS_FileClose(sdcardcontrolData.fileHandle1);
             }
-            else{
+            else
             /* File exist. Close the file and re-opens in write mode */
                 SYS_FS_FileClose(sdcardcontrolData.fileHandle1);
-                sdcardcontrolData.state = WRITE_TO_FILE;
-            }
+            
+            sdcardcontrolData.state = WRITE_TO_FILE;
         break;
      
         case WRITE_TO_FILE:
-            sdcardcontrolData.fileHandle1 = SYS_FS_FileOpen(file_path, (SYS_FS_FILE_OPEN_APPEND)); // Re-opens the file to write
-            
-            if(sdcardcontrolData.fileHandle1 != SYS_FS_HANDLE_INVALID){
-                /* Writes to the requested file */
-                if(SYS_FS_FilePrintf(sdcardcontrolData.fileHandle1, "%s\r\n", string2write) != SYS_FS_RES_SUCCESS)
-                    sdcardcontrolData.state = SDCARDCONTROL_ERROR;
-                else{
-                    SYS_FS_FileClose(sdcardcontrolData.fileHandle1);
-                    task = 0;
-                    sdcardcontrolData.state = SDCARDCONTROL_STATE_SERVICE_TASKS;
+            if(string2write){
+                sdcardcontrolData.fileHandle1 = SYS_FS_FileOpen(file_path, (SYS_FS_FILE_OPEN_APPEND)); // Re-opens the file to write
+
+                if(sdcardcontrolData.fileHandle1 != SYS_FS_HANDLE_INVALID){
+                    /* Writes to the requested file */
+                    if(SYS_FS_FilePrintf(sdcardcontrolData.fileHandle1, "%s\r\n", string2write) != SYS_FS_RES_SUCCESS)
+                        sdcardcontrolData.state = SDCARDCONTROL_ERROR;
+                    else{
+                        SYS_FS_FileClose(sdcardcontrolData.fileHandle1);
+                        task = 0;
+                        sdcardcontrolData.state = SDCARDCONTROL_STATE_SERVICE_TASKS;
+                    }
                 }
             }            
         break;

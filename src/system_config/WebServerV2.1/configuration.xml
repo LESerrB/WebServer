@@ -1294,226 +1294,230 @@
         <Path dnOrder="1">Header&amp;#160;Files/framework/system/int/src</Path>
       </File>
       <File dnOrder="320">
+        <Name dnOrder="0">sntp.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/framework/tcpip/src</Path>
+      </File>
+      <File dnOrder="321">
         <Name dnOrder="0">ffconf.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/system/fs/fat_fs/src/file_system</Path>
       </File>
-      <File dnOrder="321">
+      <File dnOrder="322">
         <Name dnOrder="0">mpfs_local.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/system/fs/mpfs/src</Path>
       </File>
-      <File dnOrder="322">
+      <File dnOrder="323">
         <Name dnOrder="0">iperf.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip</Path>
       </File>
-      <File dnOrder="323">
+      <File dnOrder="324">
         <Name dnOrder="0">tcpip_ethernet.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip</Path>
       </File>
-      <File dnOrder="324">
+      <File dnOrder="325">
         <Name dnOrder="0">zero_conf_manager.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="325">
+      <File dnOrder="326">
         <Name dnOrder="0">wolfmath.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="326">
+      <File dnOrder="327">
         <Name dnOrder="0">drv_extphy_dp83848.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/driver/ethphy</Path>
       </File>
-      <File dnOrder="327">
+      <File dnOrder="328">
         <Name dnOrder="0">trees.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/crypto/src/zlib-1.2.7</Path>
       </File>
-      <File dnOrder="328">
+      <File dnOrder="329">
         <Name dnOrder="0">drv_sdcard_local.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/driver/sdcard/src</Path>
       </File>
-      <File dnOrder="329">
+      <File dnOrder="330">
         <Name dnOrder="0">zero_conf_link_local_private.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="330">
+      <File dnOrder="331">
         <Name dnOrder="0">compress.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="331">
+      <File dnOrder="332">
         <Name dnOrder="0">_eth_dcpt_lists.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/driver/ethmac/src/dynamic</Path>
       </File>
-      <File dnOrder="332">
+      <File dnOrder="333">
         <Name dnOrder="0">drv_tmr_variant_mapping.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/driver/tmr/src</Path>
       </File>
-      <File dnOrder="333">
+      <File dnOrder="334">
         <Name dnOrder="0">sntp_manager.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="334">
+      <File dnOrder="335">
         <Name dnOrder="0">usb_billboard.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/usb</Path>
       </File>
-      <File dnOrder="335">
+      <File dnOrder="336">
         <Name dnOrder="0">memory.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="336">
+      <File dnOrder="337">
         <Name dnOrder="0">arc4.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="337">
+      <File dnOrder="338">
         <Name dnOrder="0">sys_console.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/system/console/src</Path>
       </File>
-      <File dnOrder="338">
+      <File dnOrder="339">
         <Name dnOrder="0">drv_ethphy.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/driver/ethphy</Path>
       </File>
-      <File dnOrder="339">
+      <File dnOrder="340">
         <Name dnOrder="0">http_net_manager.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="340">
+      <File dnOrder="341">
         <Name dnOrder="0">drv_extphy_ksz8061.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/driver/ethphy/src/dynamic</Path>
       </File>
-      <File dnOrder="341">
+      <File dnOrder="342">
         <Name dnOrder="0">integer.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="342">
+      <File dnOrder="343">
         <Name dnOrder="0">tfm.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="343">
+      <File dnOrder="344">
         <Name dnOrder="0">sha512.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="344">
+      <File dnOrder="345">
         <Name dnOrder="0">tftpc.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip</Path>
       </File>
-      <File dnOrder="345">
+      <File dnOrder="346">
         <Name dnOrder="0">ftp_private.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="346">
+      <File dnOrder="347">
         <Name dnOrder="0">usb_host_hub_interface.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/usb</Path>
       </File>
-      <File dnOrder="347">
+      <File dnOrder="348">
         <Name dnOrder="0">asm.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="348">
+      <File dnOrder="349">
         <Name dnOrder="0">http.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="349">
+      <File dnOrder="350">
         <Name dnOrder="0">sys_ports.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/system/ports</Path>
       </File>
-      <File dnOrder="350">
+      <File dnOrder="351">
         <Name dnOrder="0">dnss.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip</Path>
       </File>
-      <File dnOrder="351">
+      <File dnOrder="352">
         <Name dnOrder="0">integer.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="352">
+      <File dnOrder="353">
         <Name dnOrder="0">tcpip_reboot_manager.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="353">
+      <File dnOrder="354">
         <Name dnOrder="0">crc32.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/crypto/src/zlib-1.2.7</Path>
       </File>
-      <File dnOrder="354">
+      <File dnOrder="355">
         <Name dnOrder="0">usb_device_mapping.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/usb/src</Path>
       </File>
-      <File dnOrder="355">
+      <File dnOrder="356">
         <Name dnOrder="0">drv_sdcard.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/driver/sdcard</Path>
       </File>
-      <File dnOrder="356">
+      <File dnOrder="357">
         <Name dnOrder="0">error-crypt.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="357">
+      <File dnOrder="358">
         <Name dnOrder="0">tftps.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip</Path>
       </File>
-      <File dnOrder="358">
+      <File dnOrder="359">
         <Name dnOrder="0">version.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="359">
+      <File dnOrder="360">
         <Name dnOrder="0">dhcpv6_manager.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="360">
+      <File dnOrder="361">
         <Name dnOrder="0">drv_ethmac_local.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/driver/ethmac/src</Path>
       </File>
-      <File dnOrder="361">
+      <File dnOrder="362">
         <Name dnOrder="0">wolfevent.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="362">
+      <File dnOrder="363">
         <Name dnOrder="0">ge_operations.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="363">
+      <File dnOrder="364">
         <Name dnOrder="0">pwdbased.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="364">
+      <File dnOrder="365">
         <Name dnOrder="0">dhcpv6_private.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="365">
+      <File dnOrder="366">
         <Name dnOrder="0">mpi_class.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src</Path>
       </File>
-      <File dnOrder="366">
+      <File dnOrder="367">
         <Name dnOrder="0">ftp_manager.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="367">
+      <File dnOrder="368">
         <Name dnOrder="0">sys_debug.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/system/debug/src</Path>
       </File>
-      <File dnOrder="368">
+      <File dnOrder="369">
         <Name dnOrder="0">oahash.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="369">
+      <File dnOrder="370">
         <Name dnOrder="0">zutil.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/crypto/src/zlib-1.2.7</Path>
       </File>
-      <File dnOrder="370">
+      <File dnOrder="371">
         <Name dnOrder="0">http_private.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="371">
+      <File dnOrder="372">
         <Name dnOrder="0">telnet_manager.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="372">
+      <File dnOrder="373">
         <Name dnOrder="0">ipv6_private.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/tcpip/src</Path>
       </File>
-      <File dnOrder="373">
+      <File dnOrder="374">
         <Name dnOrder="0">drv_usbfs_mapping.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/driver/usb/usbfs</Path>
       </File>
-      <File dnOrder="374">
+      <File dnOrder="375">
         <Name dnOrder="0">usb_host_client_driver.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/framework/usb</Path>
       </File>
-      <File dnOrder="375">
+      <File dnOrder="376">
         <Name dnOrder="0">sha256.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/framework/crypto/src</Path>
       </File>
@@ -1537,7 +1541,7 @@
       <Template dnOrder="3">
         <Name dnOrder="0">system_definitions.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app/system_config/WebServerV2.1</Path>
-        <Checksum dnOrder="2">8459D432182F1D6FD934CDFB9F0F5077</Checksum>
+        <Checksum dnOrder="2">9DFDC9553708354FC9295C97C0D78924</Checksum>
       </Template>
       <Template dnOrder="4">
         <Name dnOrder="0">custom_http_app.c</Name>
@@ -1546,110 +1550,118 @@
         <ProjectFileChecksum dnOrder="3">57BA7CE0A3D5EE0CCC91B175C8A4066D</ProjectFileChecksum>
       </Template>
       <Template dnOrder="5">
-        <Name dnOrder="0">system_tasks.c</Name>
-        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1</Path>
-        <Checksum dnOrder="2">F7074A79B50F3032135098C1F45B56EE</Checksum>
+        <Name dnOrder="0">HR_Sync.h</Name>
+        <Path dnOrder="1">Header&amp;#160;Files/app</Path>
       </Template>
       <Template dnOrder="6">
-        <Name dnOrder="0">system_config.h</Name>
-        <Path dnOrder="1">Header&amp;#160;Files/app/system_config/WebServerV2.1</Path>
-        <Checksum dnOrder="2">D719106C78590B396E06013C47958DE8</Checksum>
+        <Name dnOrder="0">system_tasks.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1</Path>
+        <Checksum dnOrder="2">42C8E4AAB7B33F12909D9DC4E9392C9E</Checksum>
       </Template>
       <Template dnOrder="7">
+        <Name dnOrder="0">system_config.h</Name>
+        <Path dnOrder="1">Header&amp;#160;Files/app/system_config/WebServerV2.1</Path>
+        <Checksum dnOrder="2">B1EBD7A3BDADD802795DEAE7AA5D697E</Checksum>
+      </Template>
+      <Template dnOrder="8">
         <Name dnOrder="0">SDCardControl.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app</Path>
       </Template>
-      <Template dnOrder="8">
+      <Template dnOrder="9">
         <Name dnOrder="0">drv_spi_tasks.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1/framework/driver/spi/dynamic</Path>
         <Checksum dnOrder="2">B8D534FC99E9DAC9CE3CE2AFE17C3907</Checksum>
       </Template>
-      <Template dnOrder="9">
+      <Template dnOrder="10">
         <Name dnOrder="0">sys_devcon.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app/system_config/WebServerV2.1/framework/system/devcon</Path>
         <Checksum dnOrder="2">07580DCDEF89D9C79B062544109C5367</Checksum>
       </Template>
-      <Template dnOrder="10">
+      <Template dnOrder="11">
         <Name dnOrder="0">sram_disk_images.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app/system_config/WebServerV2.1/framework/system/fs</Path>
         <Checksum dnOrder="2">A58BD5BF8E05EF7FF97B8F41007499C4</Checksum>
       </Template>
-      <Template dnOrder="11">
+      <Template dnOrder="12">
+        <Name dnOrder="0">HR_Sync.c</Name>
+        <Path dnOrder="1">Source&amp;#160;Files/app</Path>
+      </Template>
+      <Template dnOrder="13">
         <Name dnOrder="0">drv_spi_api.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1/framework/driver/spi/dynamic</Path>
         <Checksum dnOrder="2">14808E10D15B0CCA85788FD513377478</Checksum>
       </Template>
-      <Template dnOrder="12">
+      <Template dnOrder="14">
         <Name dnOrder="0">http_print.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app</Path>
         <Checksum dnOrder="2">4DDEE61F0B54A7C58907AAF949A0AA46</Checksum>
         <ProjectFileChecksum dnOrder="3">451C8C8AB2C4EC8C009049BAE5368BCE</ProjectFileChecksum>
       </Template>
-      <Template dnOrder="13">
+      <Template dnOrder="15">
         <Name dnOrder="0">TCPIPControl.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app</Path>
       </Template>
-      <Template dnOrder="14">
+      <Template dnOrder="16">
         <Name dnOrder="0">sys_ports_static.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1/framework/system/ports/src</Path>
         <Checksum dnOrder="2">BC814B1E833F48A33953D65B71BC498D</Checksum>
       </Template>
-      <Template dnOrder="15">
+      <Template dnOrder="17">
         <Name dnOrder="0">TCPIPControl.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app</Path>
       </Template>
-      <Template dnOrder="16">
+      <Template dnOrder="18">
         <Name dnOrder="0">sys_devcon_local.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app/system_config/WebServerV2.1/framework/system/devcon/src</Path>
         <Checksum dnOrder="2">B66F9B4DBD85DA7F9DE775E864E01395</Checksum>
       </Template>
-      <Template dnOrder="17">
+      <Template dnOrder="19">
         <Name dnOrder="0">nvm_disk_images.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app/system_config/WebServerV2.1/framework/system/fs</Path>
         <Checksum dnOrder="2">B00B90E021F15FFD6B0B1B7F2D0650A5</Checksum>
       </Template>
-      <Template dnOrder="18">
+      <Template dnOrder="20">
         <Name dnOrder="0">main.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app</Path>
       </Template>
-      <Template dnOrder="19">
+      <Template dnOrder="21">
         <Name dnOrder="0">bsp.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1/bsp</Path>
         <Checksum dnOrder="2">A408540D4A3E160434CBE4D2565E5114</Checksum>
       </Template>
-      <Template dnOrder="20">
+      <Template dnOrder="22">
         <Name dnOrder="0">sys_reset.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1/framework/system/reset/src</Path>
         <Checksum dnOrder="2">BE66429899862E1E38250CA4006D5F46</Checksum>
       </Template>
-      <Template dnOrder="21">
+      <Template dnOrder="23">
         <Name dnOrder="0">SDCardControl.h</Name>
         <Path dnOrder="1">Header&amp;#160;Files/app</Path>
       </Template>
-      <Template dnOrder="22">
+      <Template dnOrder="24">
         <Name dnOrder="0">sys_clk_pic32mx.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1/framework/system/clk/src</Path>
         <Checksum dnOrder="2">FDF6C8068CFFAEEC5F8537A8D6514230</Checksum>
       </Template>
-      <Template dnOrder="23">
+      <Template dnOrder="25">
         <Name dnOrder="0">sys_devcon.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1/framework/system/devcon/src</Path>
         <Checksum dnOrder="2">54ADBD4A35BCA03C42C74182FCE41849</Checksum>
       </Template>
-      <Template dnOrder="24">
+      <Template dnOrder="26">
         <Name dnOrder="0">sys_devcon_pic32mx.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1/framework/system/devcon/src</Path>
         <Checksum dnOrder="2">5141464248E33ABE9E7D144A2D4DC129</Checksum>
       </Template>
-      <Template dnOrder="25">
+      <Template dnOrder="27">
         <Name dnOrder="0">system_init.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1</Path>
-        <Checksum dnOrder="2">620BB6788FCC2E7EE586E02850DE5926</Checksum>
+        <Checksum dnOrder="2">F8FED655E6DA76FC0EE647F73E537BF7</Checksum>
       </Template>
-      <Template dnOrder="26">
+      <Template dnOrder="28">
         <Name dnOrder="0">system_interrupt.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/WebServerV2.1</Path>
-        <Checksum dnOrder="2">D3DEC2D7CC8A01CCD36F926D7FB2321F</Checksum>
+        <Checksum dnOrder="2">242CA042FA49140546199F051DA792B2</Checksum>
       </Template>
     </Templates>
     <CompilerItems dnOrder="2">

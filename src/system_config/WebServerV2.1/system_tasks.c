@@ -99,6 +99,7 @@ void SYS_Tasks ( void )
     /* Maintain the application's state machine. */
     TCPIPCONTROL_Tasks();
     SDCARDCONTROL_Tasks();
+//    HR_SYNC_Tasks(); Solo para prueba
 }
 
 

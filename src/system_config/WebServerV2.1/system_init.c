@@ -327,6 +327,17 @@ const TCPIP_HTTP_MODULE_CONFIG tcpipHTTPInitData =
 };
 
 
+/*** SNTP Client Initialization Data ***/
+const TCPIP_SNTP_MODULE_CONFIG tcpipSNTPInitData =
+{
+    .ntp_server		        = TCPIP_NTP_SERVER,
+    .ntp_interface		    = TCPIP_NTP_DEFAULT_IF,
+    .ntp_connection_type	= TCPIP_NTP_DEFAULT_CONNECTION_TYPE,
+    .ntp_reply_timeout		= TCPIP_NTP_REPLY_TIMEOUT,
+    .ntp_stamp_timeout		= TCPIP_NTP_TIME_STAMP_TMO,
+    .ntp_success_interval	= TCPIP_NTP_QUERY_INTERVAL,
+    .ntp_error_interval		= TCPIP_NTP_FAST_QUERY_INTERVAL,
+};
 
 
 
@@ -456,6 +467,7 @@ const TCPIP_STACK_MODULE_CONFIG TCPIP_STACK_MODULE_CONFIG_TBL [] =
     {TCPIP_MODULE_ANNOUNCE,         &tcpipAnnounceInitData},        // TCPIP_MODULE_ANNOUNCE
     {TCPIP_MODULE_DNS_CLIENT,       &tcpipDNSClientInitData},       // TCPIP_MODULE_DNS_CLIENT
     {TCPIP_MODULE_NBNS,             &tcpipNBNSInitData},            // TCPIP_MODULE_NBNS
+    {TCPIP_MODULE_SNTP,             &tcpipSNTPInitData},            // TCPIP_MODULE_SNTP
 
     {TCPIP_MODULE_FTP_SERVER,       &tcpipFTPInitData},             // TCPIP_MODULE_FTP
     {TCPIP_MODULE_HTTP_SERVER,      &tcpipHTTPInitData},            // TCPIP_MODULE_HTTP_SERVER
@@ -866,6 +878,7 @@ void SYS_Initialize ( void* data )
     /* Initialize the Application */
     TCPIPCONTROL_Initialize();
     SDCARDCONTROL_Initialize();
+    HR_SYNC_Initialize();
 }
 
 

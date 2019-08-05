@@ -411,8 +411,8 @@ extern "C" {
 #define TCPIP_HTTP_CACHE_LEN		        		"600"
 #define TCPIP_HTTP_TIMEOUT		            		45
 #define TCPIP_HTTP_MAX_CONNECTIONS		    		4
-#define TCPIP_HTTP_DEFAULT_FILE		        		"index.htm"
-#define TCPIP_HTTPS_DEFAULT_FILE	        		"index.htm"
+#define TCPIP_HTTP_DEFAULT_FILE		        		"seek.htm"
+#define TCPIP_HTTPS_DEFAULT_FILE	        		"seek.htm"
 #define TCPIP_HTTP_DEFAULT_LEN		        		10
 #define TCPIP_HTTP_MAX_DATA_LEN		        		100
 #define TCPIP_HTTP_MIN_CALLBACK_FREE				16
@@ -439,6 +439,21 @@ extern "C" {
 
 
 
+/*** SNTP Configuration ***/
+#define TCPIP_STACK_USE_SNTP_CLIENT
+#define TCPIP_NTP_DEFAULT_IF		        		"PIC32INT"
+#define TCPIP_NTP_VERSION             			    	4
+#define TCPIP_NTP_DEFAULT_CONNECTION_TYPE   			IP_ADDRESS_TYPE_IPV4
+#define TCPIP_NTP_EPOCH		                		2208988800ul
+#define TCPIP_NTP_REPLY_TIMEOUT		        		6
+#define TCPIP_NTP_MAX_STRATUM		        		15
+#define TCPIP_NTP_TIME_STAMP_TMO				660
+#define TCPIP_NTP_SERVER		        		"cronos.cenam.mx"
+#define TCPIP_NTP_SERVER_MAX_LENGTH				30
+#define TCPIP_NTP_QUERY_INTERVAL				600
+#define TCPIP_NTP_FAST_QUERY_INTERVAL	    			14
+#define TCPIP_NTP_TASK_TICK_RATE				1100
+#define TCPIP_NTP_RX_QUEUE_LIMIT				2
 
 
 
@@ -668,6 +683,8 @@ extern "C" {
 /*** Application Instance 0 Configuration ***/
 
 /*** Application Instance 1 Configuration ***/
+
+/*** Application Instance 2 Configuration ***/
 
 //DOM-IGNORE-BEGIN
 #ifdef __cplusplus

@@ -75,6 +75,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "driver/miim/drv_miim.h"
 #include "tcpipcontrol.h"
 #include "sdcardcontrol.h"
+#include "hr_sync.h"
 
 
 // DOM-IGNORE-BEGIN
