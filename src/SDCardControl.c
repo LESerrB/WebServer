@@ -462,7 +462,7 @@ void SDCARDCONTROL_Tasks (void){
                 SYS_FS_FileClose(sdcardcontrolData.fileHandle1);
             
             sdcardcontrolData.state = WRITE_TO_FILE;
-//        break;
+// No break; continue to write the string
      
         case WRITE_TO_FILE:
             if(string2write){
