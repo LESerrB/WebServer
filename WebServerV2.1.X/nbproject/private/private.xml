@@ -7,8 +7,10 @@
             <file>file:/C:/microchip/harmony/v2_06/apps/WebServerV2.1/firmware/src/custom_http_app.c</file>
             <file>file:/C:/microchip/harmony/v2_06/apps/WebServerV2.1/firmware/src/HR_Sync.c</file>
             <file>file:/C:/microchip/harmony/v2_06/apps/WebServerV2.1/firmware/src/main.c</file>
+            <file>file:/C:/microchip/harmony/v2_06/framework/system/fs/sys_fs.h</file>
             <file>file:/C:/microchip/harmony/v2_06/apps/WebServerV2.1/firmware/src/http_print.c</file>
             <file>file:/C:/microchip/harmony/v2_06/apps/WebServerV2.1/firmware/src/system_config/WebServerV2.1/system_tasks.c</file>
+            <file>file:/C:/microchip/harmony/v2_06/framework/system/fs/src/dynamic/sys_fs.c</file>
             <file>file:/C:/microchip/harmony/v2_06/apps/WebServerV2.1/firmware/src/SDCardControl.h</file>
         </group>
     </open-files>

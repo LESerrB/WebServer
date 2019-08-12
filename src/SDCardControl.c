@@ -347,7 +347,7 @@ void SDCARDCONTROL_Tasks (void){
                 if(file_date[j] != date_search[j])
                     retdate++;
                 
-            if (retdate == 0){                
+            if (retdate == 0){
                 if(list_count < 50 && file_name[0] != '\r'){
                     principal_node = InsertAfter(principal_node, file_name);
                     list_count++;
@@ -392,8 +392,8 @@ void SDCARDCONTROL_Tasks (void){
 
         case APP_DELETE_FILE:
             if(file2seek[0] != '\0'){
-                sprintf(file_path, "%s/", buffer);
-                strcat(file_path, file2seek);
+                sprintf(file_path, "%s/%s", buffer, file2seek);
+//                strcat(file_path, file2seek);
                 temporal_node = SearchList(principal_node, file2seek);
 
                 if(temporal_node){
@@ -432,18 +432,18 @@ void SDCARDCONTROL_Tasks (void){
         case SDCARDCONTROL_REWRITE_DIRECTORY:
         /* Delete the directory file and renames the temporal directory to had*
          * only directory file                                                */
-            if(SYS_FS_FileDirectoryRemove("/mnt/mchpSite1/MUESTRAS/DIRECTORIO.txt") == SYS_FS_RES_SUCCESS)
+            if(SYS_FS_FileDirectoryRemove("/mnt/mchpSite1/MUESTRAS/DIRECTORIO.txt") == SYS_FS_RES_SUCCESS){
                 SYS_FS_FileDirectoryRenameMove("/mnt/mchpSite1/MUESTRAS/Directorio-temp.txt", "/mnt/mchpSite1/MUESTRAS/DIRECTORIO.txt");
-
-            task = 0;
-            SendMessage = true;
-            sdcardcontrolData.state = SDCARDCONTROL_STATE_SERVICE_TASKS;
+                task = 0;
+                SendMessage = true;
+                sdcardcontrolData.state = SDCARDCONTROL_STATE_SERVICE_TASKS;
+            }
         break;
 //============================ FILE WRITE ROUTINE ==============================
 /* This section of code opens a file to write or update a file */
         case OPEN_FILE:
-            sprintf(file_path, "%s/", buffer);
-            strcat(file_path, new_file);
+            sprintf(file_path, "%s/%s", buffer, new_file);
+//            strcat(file_path, new_file);
             sdcardcontrolData.fileHandle1 = SYS_FS_FileOpen(file_path, (SYS_FS_FILE_OPEN_READ)); // Checks if the file exist
             
             if(sdcardcontrolData.fileHandle1 == SYS_FS_HANDLE_INVALID){
@@ -462,8 +462,8 @@ void SDCARDCONTROL_Tasks (void){
                 SYS_FS_FileClose(sdcardcontrolData.fileHandle1);
             
             sdcardcontrolData.state = WRITE_TO_FILE;
-// No break; continue to write the string
-     
+/* No break; continue to write the string if the string it´s doesn´t ready    *
+ * continue with other tasks and return when its ready to write               */
         case WRITE_TO_FILE:
             if(string2write){
                 sdcardcontrolData.fileHandle1 = SYS_FS_FileOpen(file_path, (SYS_FS_FILE_OPEN_APPEND)); // Re-opens the file to write
