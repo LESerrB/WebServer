@@ -347,14 +347,13 @@ void SDCARDCONTROL_Tasks (void){
                 if(file_date[j] != date_search[j])
                     retdate++;
                 
-            if (retdate == 0){
-                if(list_count < 50 && file_name[0] != '\r'){
+            if (retdate == 0 && file_name[0] != '\r'){
+                if(list_count < 50){
                     principal_node = InsertAfter(principal_node, file_name);
                     list_count++;
                 }
                 else
-                    if(file_name[0] != '\r')
-                        principal_node = InsertBefore(principal_node, file_name);
+                    principal_node = InsertBefore(principal_node, file_name);
                 
                 if(BeginingList == false){
                     initial_position = SYS_FS_FileTell(sdcardcontrolData.fileHandle) - stringLength;
