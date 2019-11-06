@@ -1,21 +1,208 @@
-<h1>Manejador de Archivos</h1>
+<link rel="stylesheet" type="text/css" media="all" href="calendar-win2k-cold-1.css" title="win2k-cold-1" />
 
-<h3>Crear Directorio</h3>
-<p> Crea un archivo Directorio que guarda los nombres de todos los archivos en la Tarjeta
-    micro SD </p>
+<div>
+	Archivos Directorios con todos los nombres de los archivos muestras contenidos por carpeta<br>
+	~DirFile~
+</div>
+<!--************************************************************-->
+<!------------------------ SEARCH -------------------------------->
+<!--************************************************************-->
+<!--style="display: none"-->
+<div class="examplebox">    
+    <p>
+        Ingresar la fecha: <input type="text" name="date" id="f_date_a" />
+        <input type="button" name="enviar" value="Enviar" onclick="ReadDate();"/>
+    </p>
+    <input type="checkbox" id="chck" > Incluir hora<br>
+</div>
+<!-- Search parameters -->
+<div id="carpeta"></div>
+<p>Iniciar Busqueda
+    <input type="button" value="Aceptar" id="openFile" />
+</p>
+<!-- Files found inthe specific directory and his download link -->
+<div id="flfnd"></div>
+<!--************************************************************-->
+<!------------------------- DELETE ------------------------------->
+<!--************************************************************-->
+<div id="filedelete" align="center"></div>
+<div class="examplebox" align="center">
+    <p>Archivo a Eliminar:</p>
+    <form method="post" action="forms.htm">
+        <div>
+            <input type="text" name="delfile" maxlength="50" style="width : 300px; heigth : 1px">  
+            &nbsp;  
+            <input type="submit" value="Enviar">    
+        </div>
+    </form>
+</div>
+<!--************************************************************-->
+<!------------------- DELETE FILE STATUS ------------------------->
+<!--************************************************************-->
+<div class="examplebox" align="center">
+    ~status_file~
+</div>
+<!--************************************************************-->
+<!--************************************************************-->
+<!--************************************************************-->
+<!-- Scripts for calendar plugin -->
+<script type="text/javascript" src="calendar.js"></script>
+<!-- language for the calendar -->
+<script type="text/javascript" src="lang/calendar-es.js"></script>
+<!-- The following script defines the Calendar.setup helper function, which makes
+     adding a calendar a matter of 1 or 2 lines of code. -->
+<script type="text/javascript" src="calendar-setup.js"></script>
+<!-- Scripts for web page -->
+<script>
+/*****************************************************************/
+// > Global variables used in the script section
+/*****************************************************************/
+	var DirFile;                            // Directory name selected (ignores "_Dir.txt")
+	var fileR;                              // Path to "Directorio" to read the directory files
+    var fecha_bsq;                          // Date in the file name
+    var hr_bsq;                             // Hour in the file name
+    var fecha_sel;                          // Date selected in the calendar
+    var hr_sel;                             // Hour selected in the calendar
+    var chck;                               // Select if the hour is add to the search
+    var str;                                // Files found for the selected time
+/*****************************************************************/
+// > This function takes the name of the directory file to look at
+/*****************************************************************/
+	function SearchDir(NomDir){
+		fileR = "/Directorio/";
+		DirFile = NomDir.substr(0, NomDir.length-8);
+		fileR = fileR + NomDir;
+	}
+/*****************************************************************/
+// > Load the txt file alocated in the server	
+/*****************************************************************/
+	document.getElementById("openFile").addEventListener("click", openFile);
 
-<h3>Consultar Archivos</h3>
-<p> Permite buscar en el archivo Directorio los nombres de archivos de acuerdo con la fecha
-    deseada por el usuario </p>
+    function openFile(){
+        var xhr = new XMLHttpRequest();
 
-<form method="post" action="forms.htm">
-	<div>
-		<select name="task">
-			<option value="0">Elegir una Opcion</option>
-			<option value="1">Crear Directorio</option>
-			<option value="2">Consultar Archivos</option>
-		</select> 
-		&nbsp;  
-		<input type="submit" value="Enviar">
-	</div>
-</form> 
+        xhr.onreadystatechange = function(){
+            if (this.readyState == 4 && this.status == 200) {
+                readFile(this);
+            }
+        };
+
+        xhr.open("GET", fileR, true);
+        xhr.send();
+    }
+
+    function readFile(Arctxt){
+        var file = Arctxt.responseText.split("\n");
+        var n;
+        var m;
+        var namesfind = false;
+
+        str = "Archivos Encontrados:<br>";
+        
+        for(var line of file){
+            if (line !== "") {
+            	line = line.substr(0, line.length - 1);
+
+                fecha_bsq = new String (line[line.length - 17] +
+                                        line[line.length - 16] +
+                                        line[line.length - 15] +
+                                        line[line.length - 14] +
+                                        line[line.length - 13] +
+                                        line[line.length - 12]);
+                
+                hr_bsq = new String (line[line.length - 10] +
+                                     line[line.length - 9]);
+                
+                n = fecha_bsq.localeCompare(fecha_sel);
+                
+                if(chck == true){
+                    m = hr_bsq.localeCompare(hr_sel);
+
+                    if(n == 0 && m == 0){
+                        namesfind = true;
+                        str += line + "&nbsp;<a href=\x22/" + DirFile + "/" + line + "\x22>Abrir</a>&nbsp;" + 
+                        	   "<input type=\x22button\x22 value=\x22Eliminar\x22 onclick=\x22" + 
+                        	   "SendNm(\x27" + line + "\x27);\x22>" + "<br>";
+                    }
+                }
+                else{
+                    if(n == 0){
+                        namesfind = true;
+                        str += line + "&nbsp;<a href=\x22/" + DirFile + "/" + line + "\x22>Abrir</a>&nbsp;" +
+                        	   "<input type=\x22button\x22 value=\x22Eliminar\x22 onclick=\x22" +
+                        	   "SendNm(\x27" + line + "\x27);\x22>" + "<br>";
+                    }
+                }
+            }
+        }
+
+        if (namesfind == false)
+            str += "Ninguno. Verifique los parametros de busqueda";
+
+        document.getElementById("flfnd").innerHTML = str;
+    }
+/*****************************************************************/
+// > Calendar configurations
+/*****************************************************************/
+function catcalc(cal) {
+        var date = cal.date;
+        var time = date.getTime()
+        
+        if (field == cal.params.inputField) {
+            field = document.getElementById("f_date_a");
+            
+            time -= Date.WEEK;                  // substract one week
+        }
+        else {
+            time += Date.WEEK;                  // add one week
+        }
+
+        var date2 = new Date(time);             // constructor with the selected date
+
+        field.value = date2.print("%Y-%m-%d %H:%M");
+    }
+
+    Calendar.setup({
+        inputField     :    "f_date_a",         // id of the input field
+        ifFormat       :    "%d/%m/%Y %H:%M",   // format of the input field
+        showsTime      :    true,
+        timeFormat     :    "24",
+        onUpdate       :    catcalc
+    });
+/*****************************************************************/
+// > Read string from date box
+/*****************************************************************/
+    function ReadDate(){
+        var valor = document.getElementById("f_date_a").value;
+        chck = document.getElementById("chck").checked;
+
+        fecha_sel = new String (valor[0] +
+                                valor[1] +
+                                valor[3] +
+                                valor[4] +
+                                valor[8] +
+                                valor[9]);
+
+        if (chck == true) {
+            hr_sel = new String (valor[11] +
+                                 valor[12]);
+        }
+
+        document.getElementById("carpeta").innerHTML = "Buscando Muestras del: <b>" + fecha_sel[0] + fecha_sel[1] + "/"
+                                                                                    + fecha_sel[2] + fecha_sel[3] + "/"
+                                                                                    + fecha_sel[4] + fecha_sel[5] + "</b>"
+                                                                                    + " En: <b>" + DirFile + "</b>";
+    }
+/*****************************************************************/
+// > Concatenate the Directory name and the File name to send the
+// > delete form to the board and delete from the SD Card
+/*****************************************************************/
+	function SendNm(NomArc){
+		var CmplFileName = new String(DirFile + "/" + NomArc);
+		document.getElementById("filedelete").innerHTML = CmplFileName;
+		//document.getElementsByName('delfile')[0].value = CmplFileName;
+	}
+/*****************************************************************/
+/*****************************************************************/
+/*****************************************************************/
+</script>
