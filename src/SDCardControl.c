@@ -18,7 +18,7 @@
     system interfaces (such as the "Initialize" and "Tasks" functions) of any of
     the modules in the system or make any assumptions about when those functions
     are called.  That is the responsibility of the configuration-specific system
-    files.
+    files. 
  ******************************************************************************/
 
 // DOM-IGNORE-BEGIN
@@ -446,7 +446,7 @@ void SDCARDCONTROL_Tasks (void){
             sdcardcontrolData.fileHandle1 = SYS_FS_FileOpen(file_path, (SYS_FS_FILE_OPEN_READ)); // Checks if the file exist
             
             if(sdcardcontrolData.fileHandle1 == SYS_FS_HANDLE_INVALID){
-            /* Could not open the file. File doesn´t exist, new file is created and add to Directory File */
+            /* Could not open the file. File doesnÂ´t exist, new file is created and add to Directory File */
                 sdcardcontrolData.fileHandle = SYS_FS_FileOpen("/mnt/mchpSite1/MUESTRAS/DIRECTORIO.txt", (SYS_FS_FILE_OPEN_APPEND));
                 
                 if(sdcardcontrolData.fileHandle != SYS_FS_HANDLE_INVALID)
@@ -461,7 +461,7 @@ void SDCARDCONTROL_Tasks (void){
                 SYS_FS_FileClose(sdcardcontrolData.fileHandle1);
             
             sdcardcontrolData.state = WRITE_TO_FILE;
-/* No break; continue to write the string if the string it´s doesn´t ready    *
+/* No break; continue to write the string if the string itÂ´s doesnÂ´t ready    *
  * continue with other tasks and return when its ready to write               */
         case WRITE_TO_FILE:
             if(string2write){
