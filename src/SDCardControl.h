@@ -26,7 +26,7 @@ Microchip licenses to you the right to use, modify, copy and distribute
 Software only when embedded on a Microchip microcontroller or digital signal
 controller that is integrated into your product or third party product
 (pursuant to the sublicense terms in the accompanying license agreement).
-
+ 
 You should refer to the license agreement accompanying this Software for
 additional information regarding your rights and obligations.
 
