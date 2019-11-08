@@ -69,29 +69,26 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
     Function Prototypes
  ****************************************************************************/
 #if defined(TCPIP_HTTP_USE_POST)
-    static HTTP_IO_RESULT HTTPPostFiles(HTTP_CONN_HANDLE connHandle);
-    static HTTP_IO_RESULT HTTPDeleteFiles(HTTP_CONN_HANDLE connHandle);
-    static HTTP_IO_RESULT HTTPReadDate(HTTP_CONN_HANDLE connHandle);
-
+    #if defined(SYS_OUT_ENABLE)
+        static HTTP_IO_RESULT HTTPPostLCD(HTTP_CONN_HANDLE connHandle);
+#endif
     #if defined(HTTP_APP_USE_MD5)
         static HTTP_IO_RESULT HTTPPostMD5(HTTP_CONN_HANDLE connHandle);
     #endif
-
     #if defined(HTTP_APP_USE_RECONFIG)
         static HTTP_IO_RESULT HTTPPostConfig(HTTP_CONN_HANDLE connHandle);
         #if defined(TCPIP_STACK_USE_SNMP_SERVER)
         static HTTP_IO_RESULT HTTPPostSNMPCommunity(HTTP_CONN_HANDLE connHandle);
         #endif
     #endif
-
     #if defined(HTTP_APP_USE_EMAIL) 
         static HTTP_IO_RESULT HTTPPostEmail(HTTP_CONN_HANDLE connHandle);
     #endif
-
     #if defined(TCPIP_STACK_USE_DYNAMICDNS_CLIENT)
         static HTTP_IO_RESULT HTTPPostDDNSConfig(HTTP_CONN_HANDLE connHandle);
     #endif
 
+    static HTTP_IO_RESULT HTTPDeleteFile(HTTP_CONN_HANDLE connHandle);
 #endif
 
 /****************************************************************************
@@ -115,8 +112,6 @@ static bool lastSuccess = false;
 
 // Stick status message variable.  See lastSuccess for details.
 static bool lastFailure = false;
-
-//static bool ReadyToPrint = false;
 
 /****************************************************************************
   Section:
@@ -146,12 +141,12 @@ HTTP_IO_RESULT TCPIP_HTTP_GetExecute(HTTP_CONN_HANDLE connHandle)
     if(!memcmp(filename, "forms.htm", 9))
     {
         // Seek out each of the four LED strings, and if it exists set the LED states.
-        ptr = TCPIP_HTTP_ArgGet(httpDataBuff, (const uint8_t *)"led2");
+//        ptr = TCPIP_HTTP_ArgGet(httpDataBuff, (const uint8_t *)"led2");
 //        if(ptr)
 //            BSP_LEDStateSet(APP_LED_3, (*ptr == '1'));
             //LED2_IO = (*ptr == '1');
 
-        ptr = TCPIP_HTTP_ArgGet(httpDataBuff, (const uint8_t *)"led1");
+//        ptr = TCPIP_HTTP_ArgGet(httpDataBuff, (const uint8_t *)"led1");
 //        if(ptr)
 //            BSP_LEDStateSet(APP_LED_2, (*ptr == '1'));
             //LED1_IO = (*ptr == '1');
@@ -174,20 +169,20 @@ HTTP_IO_RESULT TCPIP_HTTP_GetExecute(HTTP_CONN_HANDLE connHandle)
         ptr = TCPIP_HTTP_ArgGet(httpDataBuff, (const uint8_t *)"led");
 
         // Toggle the specified LED.
-        switch(*ptr) {
-            case '0':
+//        switch(*ptr) {
+//            case '0':
 //                BSP_LEDToggle(APP_LED_1);
-                //LED0_IO ^= 1;
-                break;
-            case '1':
+//                //LED0_IO ^= 1;
+//                break;
+//            case '1':
 //                BSP_LEDToggle(APP_LED_2);
-                //LED1_IO ^= 1;
-                break;
-            case '2':
+//                //LED1_IO ^= 1;
+//                break;
+//            case '2':
 //                BSP_LEDToggle(APP_LED_3);
-                //LED2_IO ^= 1;
-                break;
-        }
+//                //LED2_IO ^= 1;
+//                break;
+//        }
     }
 
     return HTTP_IO_DONE;
@@ -215,17 +210,11 @@ HTTP_IO_RESULT TCPIP_HTTP_PostExecute(HTTP_CONN_HANDLE connHandle)
     // Make sure uint8_t filename[] above is large enough for your longest name
     SYS_FS_FileNameGet(TCPIP_HTTP_CurrentConnectionFileGet(connHandle), filename, sizeof(filename));
 
-    if(!memcmp(filename, "forms.htm", 9))
-        return HTTPPostFiles(connHandle);
-    
-//    if(!strcmp((char *)filename, "seek.htm"))
-//        return HTTPPostEmail(connHandle);
-    if(!strcmp((char *)filename, "seek.htm"))
-        return HTTPReadDate(connHandle);
-    
-    if(!memcmp(filename, "delete.htm", 10))
-        return HTTPDeleteFiles(connHandle);
-    
+#if defined(SYS_OUT_ENABLE)
+    /*if(!memcmp(filename, "forms.htm", 9))
+        return HTTPPostLCD(connHandle);*/
+#endif
+
 #if defined(HTTP_APP_USE_MD5)
     if(!memcmp(filename, "upload.htm", 10))
         return HTTPPostMD5(connHandle);
@@ -240,76 +229,26 @@ HTTP_IO_RESULT TCPIP_HTTP_PostExecute(HTTP_CONN_HANDLE connHandle)
     #endif
 #endif
 
+#if defined(HTTP_APP_USE_EMAIL)
+    if(!strcmp((char *)filename, "email/index.htm"))
+        return HTTPPostEmail(connHandle);
+#endif
+
 #if defined(TCPIP_STACK_USE_DYNAMICDNS_CLIENT)
     if(!strcmp((char *)filename, "dyndns/index.htm"))
         return HTTPPostDDNSConfig(connHandle);
 #endif
+    
+    if(!memcmp(filename, "forms.htm", 9))
+        return HTTPDeleteFile(connHandle);
 
     return HTTP_IO_DONE;
 }
 
-//****************************** TASK SELECTION ******************************//
-static HTTP_IO_RESULT HTTPPostFiles(HTTP_CONN_HANDLE connHandle) {
-    uint8_t *cDest;
-    uint8_t *httpDataBuff;
-    uint16_t httpBuffSize;
-
-    #define SM_POST_FILES_READ_NAME       (0u)
-    #define SM_POST_FILES_READ_VALUE      (1u)
-
-    httpDataBuff = TCPIP_HTTP_CurrentConnectionDataBufferGet(connHandle);
-    httpBuffSize = TCPIP_HTTP_CurrentConnectionDataBufferSizeGet(connHandle);
-    
-    switch(TCPIP_HTTP_CurrentConnectionPostSmGet(connHandle)) {
-        // Find the name
-        case SM_POST_FILES_READ_NAME:
-            // Read a name
-            if(TCPIP_HTTP_PostNameRead(connHandle, httpDataBuff, httpBuffSize) == HTTP_READ_INCOMPLETE)
-                return HTTP_IO_NEED_DATA;
-
-            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_POST_FILES_READ_NAME);
-            // No break...continue reading value
-
-        case SM_POST_FILES_READ_VALUE:
-            // If value is expected, read it to data buffer, otherwise ignore it (by reading to NULL)            
-            if(!strcmp((char *)httpDataBuff, (const char *)"task"))
-                cDest = httpDataBuff;
-            else
-                cDest = NULL;
-
-            // Read a value string
-            if(TCPIP_HTTP_PostValueRead(connHandle, cDest, httpBuffSize) == HTTP_READ_INCOMPLETE)
-                return HTTP_IO_NEED_DATA;
-
-            // If this was an unexpected value, look for a new name
-            if(!cDest) {
-                TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_POST_FILES_READ_NAME);
-                break;
-            }
-            
-            if(*cDest == '1'){
-                task = 1;
-                strcpy((char *)httpDataBuff, "/forms.htm");
-            }
-            else if(*cDest == '2'){
-                task = 2;
-                strcpy((char *)httpDataBuff, "/seek.htm");
-            }
-            else{
-                task = 0;
-                strcpy((char *)httpDataBuff, "/forms.htm");
-            }
-
-            // This is the only expected value, so callback is done
-            TCPIP_HTTP_CurrentConnectionStatusSet(connHandle, HTTP_REDIRECT);
-            return HTTP_IO_DONE;
-    }
-    // Default assumes that we're returning for state machine convenience.
-    // Function will be called again later.
-    return HTTP_IO_WAITING;
-}
-//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ FILE NAME SEARCH $$$$$$$$$$$$$$$$$$$$$$$$$$$$$//
-static HTTP_IO_RESULT HTTPDeleteFiles(HTTP_CONN_HANDLE connHandle) {
+/* This function recives the file name and the directory name of the file to
+ * send to the FileManager State Machine to delete it from the SD Card. 
+ */
+static HTTP_IO_RESULT HTTPDeleteFile(HTTP_CONN_HANDLE connHandle) {
     uint8_t *cDest;
     uint8_t *httpDataBuff;
     uint16_t httpBuffSize;
@@ -349,12 +288,12 @@ static HTTP_IO_RESULT HTTPDeleteFiles(HTTP_CONN_HANDLE connHandle) {
                 break;
             }
             else
-                task = 3;
+                task = 1;
             
-            strcpy(file2seek, cDest);
+            strcpy(DelFile, cDest);
             
             // This is the only expected value, so callback is done
-            strcpy((char *)httpDataBuff, "/delete.htm");
+            strcpy((char *)httpDataBuff, "/prueba.html");
             TCPIP_HTTP_CurrentConnectionStatusSet(connHandle, HTTP_REDIRECT);
             return HTTP_IO_DONE;
     }
@@ -363,121 +302,99 @@ static HTTP_IO_RESULT HTTPDeleteFiles(HTTP_CONN_HANDLE connHandle) {
     // Function will be called again later.
     return HTTP_IO_WAITING;    
 }
-//########################### SEARCHING PARAMETRS ############################//
-// size of an email parameter
-#define HTTP_APP_DATE_PARAM_SIZE           10
 
-int postDateHandle = 1;
+/****************************************************************************
+  Function:
+    static HTTP_IO_RESULT HTTPPostLCD(HTTP_CONN_HANDLE connHandle)
 
-// structure describing the post date operation
-typedef struct{
-    char*   ptrParam;                                                           // pointer to the current parameter being retrieved
-    int     paramSize;                                                          // size of the buffer to retrieve the parameter
-    int     attachLen;                                                          // length of the attachment buffer
-    bool    DateParamsDone;                                                     // flag that signals that all parameters were retrieved
-    TCPIP_SMTPC_MESSAGE_RESULT DateRes;                                         // operation outcome
+  Summary:
+    Processes the LCD form on forms.htm
 
-    // storage area
-    char DateDay[HTTP_APP_DATE_PARAM_SIZE + 1];
-    char DateMonth[HTTP_APP_DATE_PARAM_SIZE + 1];
-    char DateYear[HTTP_APP_DATE_PARAM_SIZE + 1];
-    char DateHour[HTTP_APP_DATE_PARAM_SIZE + 1];
-}HTTP_POST_DATE_DCPT;
+  Description:
+    Locates the 'lcd' parameter and uses it to update the text displayed
+    on the board's LCD display.
 
-static HTTP_POST_DATE_DCPT postDate;
+    This function has four states.  The first reads a name from the data
+    string returned as part of the POST request.  If a name cannot
+    be found, it returns, asking for more data.  Otherwise, if the name
+    is expected, it reads the associated value and writes it to the LCD.
+    If the name is not expected, the value is discarded and the next name
+    parameter is read.
 
-static HTTP_IO_RESULT HTTPReadDate(HTTP_CONN_HANDLE connHandle){
+    In the case where the expected string is never found, this function
+    will eventually return HTTP_IO_NEED_DATA when no data is left.  In that
+    case, the HTTP server will automatically trap the error and issue an
+    Internal Server Error to the browser.
 
-    char paramName[HTTP_APP_DATE_PARAM_SIZE + 1];
+  Precondition:
+    None
 
-    #define SM_DATE_INIT                       (0)
-    #define SM_DATE_READ_PARAM_NAME            (1)
-    #define SM_DATE_READ_PARAM_VALUE           (2)
-    #define SM_DATE_SEND_MESSAGE               (3)
-    #define SM_DATE_WAIT_RESULT                (4)
+  Parameters:
+    connHandle  - HTTP connection handle
 
-    switch(TCPIP_HTTP_CurrentConnectionPostSmGet(connHandle)){
-        case SM_DATE_INIT:
-            memset(&postDate, 0, sizeof(postDate));
-            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_DATE_READ_PARAM_NAME);
-            return HTTP_IO_WAITING;
+  Return Values:
+    HTTP_IO_DONE - the parameter has been found and saved
+    HTTP_IO_WAITING - the function is pausing to continue later
+    HTTP_IO_NEED_DATA - data needed by this function has not yet arrived
+ ****************************************************************************/
+#if defined(SYS_OUT_ENABLE)
+static HTTP_IO_RESULT HTTPPostLCD(HTTP_CONN_HANDLE connHandle)
+{
+    uint8_t *cDest;
+    uint8_t *httpDataBuff;
+    uint16_t httpBuffSize;
 
-        case SM_DATE_READ_PARAM_NAME:
-            // Search for a parameter name in POST data
-            if(TCPIP_HTTP_PostNameRead(connHandle, (uint8_t*)paramName, sizeof(paramName)) == HTTP_READ_INCOMPLETE){
-                return HTTP_IO_NEED_DATA;
-            }
+    #define SM_POST_LCD_READ_NAME       (0u)
+    #define SM_POST_LCD_READ_VALUE      (1u)
 
-            // Try to match the name value
-            if(!strcmp(paramName, (const char *)"day")){                        // Read the day
-                postDate.ptrParam = postDate.DateDay;
-                postDate.paramSize = sizeof(postDate.DateDay) - 1;
-            }
-            
-            else if(!strcmp(paramName, (const char *)"month")){                 // Read the month
-                postDate.ptrParam = postDate.DateMonth;
-                postDate.paramSize = sizeof(postDate.DateMonth) - 1;
-            }
+    httpDataBuff = TCPIP_HTTP_CurrentConnectionDataBufferGet(connHandle);
+    httpBuffSize = TCPIP_HTTP_CurrentConnectionDataBufferSizeGet(connHandle);
+    switch(TCPIP_HTTP_CurrentConnectionPostSmGet(connHandle))
+    {
+        // Find the name
+        case SM_POST_LCD_READ_NAME:
 
-            else if(!strcmp(paramName, (const char *)"year")){                  // Read the year
-                postDate.ptrParam = postDate.DateYear;
-                postDate.paramSize = sizeof(postDate.DateYear) - 1;
-            }
-
-            else if(!strcmp(paramName, (const char *)"hour")) {                 // Read the hour
-                postDate.ptrParam = postDate.DateHour;
-                postDate.paramSize = sizeof(postDate.DateHour) - 1;
-                postDate.DateParamsDone = true;
-            }
-            
-            // Read the parameter now
-            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_DATE_READ_PARAM_VALUE);
-            return HTTP_IO_WAITING;
-
-        case SM_DATE_READ_PARAM_VALUE:
-            // Search for a parameter value in POST data
-            if(TCPIP_HTTP_PostValueRead(connHandle, (uint8_t*)postDate.ptrParam, postDate.paramSize) == HTTP_READ_INCOMPLETE)
+            // Read a name
+            if(TCPIP_HTTP_PostNameRead(connHandle, httpDataBuff, httpBuffSize) == HTTP_READ_INCOMPLETE)
                 return HTTP_IO_NEED_DATA;
 
-            // End parameter properly
-            postDate.ptrParam[postDate.paramSize] = 0;
+            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_POST_LCD_READ_VALUE);
+            // No break...continue reading value
 
-            // Check if we're done with the parameters
-            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, postDate.DateParamsDone == true ? SM_DATE_SEND_MESSAGE : SM_DATE_READ_PARAM_NAME);
-            return HTTP_IO_WAITING;
+        // Found the value, so store the LCD and return
+        case SM_POST_LCD_READ_VALUE:
 
-        case SM_DATE_SEND_MESSAGE:            
-            date_search[0] = postDate.DateDay[0];
-            date_search[1] = postDate.DateDay[1];
-            date_search[2] = postDate.DateMonth[0];
-            date_search[3] = postDate.DateMonth[1];
-            date_search[4] = postDate.DateYear[0];
-            date_search[5] = postDate.DateYear[1];
-            date_search[6] = postDate.DateHour[0];
-            date_search[7] = postDate.DateHour[1];
-            
-            task = 2;
+            // If value is expected, read it to data buffer,
+            // otherwise ignore it (by reading to NULL)
+            if(!strcmp((char *)httpDataBuff, (const char *)"lcd"))
+                cDest = httpDataBuff;
+            else
+                cDest = NULL;
 
-            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_DATE_WAIT_RESULT);
-            return HTTP_IO_WAITING;
+            // Read a value string
+            if(TCPIP_HTTP_PostValueRead(connHandle, cDest, httpBuffSize) == HTTP_READ_INCOMPLETE)
+                return HTTP_IO_NEED_DATA;
 
-        case SM_DATE_WAIT_RESULT:
-            // Wait for status done
-            if(postDate.DateRes == TCPIP_SMTPC_RES_PENDING){   // not done yet
-                return HTTP_IO_WAITING;
+            // If this was an unexpected value, look for a new name
+            if(!cDest)
+            {
+                TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_POST_LCD_READ_NAME);
+                break;
             }
 
-            // Done
-            postDateHandle = 0;
+            SYS_OUT_MESSAGE((char *)cDest);
 
-            // Redirect to the page
-            strcpy((char *)TCPIP_HTTP_CurrentConnectionDataBufferGet(connHandle), "/seek.htm");
+            // This is the only expected value, so callback is done
+            strcpy((char *)httpDataBuff, "/forms.htm");
             TCPIP_HTTP_CurrentConnectionStatusSet(connHandle, HTTP_REDIRECT);
             return HTTP_IO_DONE;
     }
 
-    return HTTP_IO_DONE;
+    // Default assumes that we're returning for state machine convenience.
+    // Function will be called again later.
+    return HTTP_IO_WAITING;
 }
+#endif
 
 /****************************************************************************
   Function:
@@ -539,7 +456,7 @@ static HTTP_IO_RESULT HTTPPostMD5(HTTP_CONN_HANDLE connHandle)
             // See if a CRLF is in the buffer
             lenA = TCPIP_TCP_ArrayFind(sktHTTP, (const uint8_t *)"\r\n", 2, 0, 0, false);
             if(lenA == 0xffff)
-            {   // If not, ask for more data
+            {   // if not, ask for more data
                 return HTTP_IO_NEED_DATA;
             }
 
@@ -922,6 +839,216 @@ static HTTP_IO_RESULT HTTPPostSNMPCommunity(HTTP_CONN_HANDLE connHandle)
     HTTP_IO_WAITING - the function is waiting for the SMTP process to complete
     HTTP_IO_NEED_DATA - data needed by this function has not yet arrived
  ****************************************************************************/
+#if defined(HTTP_APP_USE_EMAIL)
+// size of an email parameter
+#define HTTP_APP_EMAIL_PARAM_SIZE           30 
+// maximum size of the mail body
+#define HTTP_APP_EMAIL_BODY_SIZE            200 
+// maximum size of the mail attachment
+#define HTTP_APP_EMAIL_ATTACHMENT_SIZE      200 
+
+// handle of the mail message submitted to SMTPC
+static TCPIP_SMTPC_MESSAGE_HANDLE postMailHandle = 0;
+
+// structure describing the post email operation
+typedef struct
+{
+    char*   ptrParam;       // pointer to the current parameter being retrieved
+    int     paramSize;      // size of the buffer to retrieve the parameter
+    int     attachLen;      // length of the attachment buffer
+    bool    mailParamsDone; // flag that signals that all parameters were retrieved
+    TCPIP_SMTPC_ATTACH_BUFFER attachBuffer; // descriptor for the attachment
+    TCPIP_SMTPC_MESSAGE_RESULT mailRes;     // operation outcome
+
+    // storage area
+    char serverName[HTTP_APP_EMAIL_PARAM_SIZE + 1];
+    char username[HTTP_APP_EMAIL_PARAM_SIZE + 1];
+    char password[HTTP_APP_EMAIL_PARAM_SIZE + 1];
+    char mailTo[HTTP_APP_EMAIL_PARAM_SIZE + 1];
+    char serverPort[10 + 1];
+    char mailBody[HTTP_APP_EMAIL_BODY_SIZE + 1];
+    char mailAttachment[HTTP_APP_EMAIL_ATTACHMENT_SIZE];
+
+}HTTP_POST_EMAIL_DCPT;
+
+static HTTP_POST_EMAIL_DCPT postEmail;
+
+// callback for getting the signal of mail completion
+static void postMailCallback(TCPIP_SMTPC_MESSAGE_HANDLE messageHandle, const TCPIP_SMTPC_MESSAGE_REPORT* pMailReport)
+{
+    postEmail.mailRes = pMailReport->messageRes;
+    if(postEmail.mailRes < 0)
+    {
+        SYS_CONSOLE_PRINT("SMTPC mail FAILED! Callback result: %d\r\n", postEmail.mailRes);
+    }
+    else
+    {
+        SYS_CONSOLE_MESSAGE("SMTPC mail SUCCESS!\r\n");
+    }
+}
+
+static HTTP_IO_RESULT HTTPPostEmail(HTTP_CONN_HANDLE connHandle)
+{
+
+    TCPIP_SMTPC_MAIL_MESSAGE mySMTPMessage;
+    char paramName[HTTP_APP_EMAIL_PARAM_SIZE + 1];
+
+    #define SM_EMAIL_INIT                       (0)
+    #define SM_EMAIL_READ_PARAM_NAME            (1)
+    #define SM_EMAIL_READ_PARAM_VALUE           (2)
+    #define SM_EMAIL_SEND_MESSAGE               (3)
+    #define SM_EMAIL_WAIT_RESULT                (4)
+
+    switch(TCPIP_HTTP_CurrentConnectionPostSmGet(connHandle))
+    {
+        case SM_EMAIL_INIT:
+            if(postMailHandle != 0)
+            {   // some other operation on going
+                return HTTP_IO_WAITING;
+            }
+
+            memset(&postEmail, 0, sizeof(postEmail));
+            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_EMAIL_READ_PARAM_NAME);
+            return HTTP_IO_WAITING;
+
+
+        case SM_EMAIL_READ_PARAM_NAME:
+            // Search for a parameter name in POST data
+            if(TCPIP_HTTP_PostNameRead(connHandle, (uint8_t*)paramName, sizeof(paramName)) == HTTP_READ_INCOMPLETE)
+            {
+                return HTTP_IO_NEED_DATA;
+            }
+
+            // Try to match the name value
+            if(!strcmp(paramName, (const char *)"server"))
+            {   // Read the server name
+                postEmail.ptrParam = postEmail.serverName;
+                postEmail.paramSize = sizeof(postEmail.serverName) - 1;
+            }
+            else if(!strcmp(paramName, (const char *)"user"))
+            {   // Read the user name
+                postEmail.ptrParam = postEmail.username;
+                postEmail.paramSize = sizeof(postEmail.username) - 1;
+            }
+            else if(!strcmp(paramName, (const char *)"pass"))
+            {   // Read the password
+                postEmail.ptrParam = postEmail.password;
+                postEmail.paramSize = sizeof(postEmail.password) - 1;
+            }
+            else if(!strcmp(paramName, (const char *)"to"))
+            {   // Read the To string
+                postEmail.ptrParam = postEmail.mailTo;
+                postEmail.paramSize = sizeof(postEmail.mailTo) - 1;
+            }
+            else if(!strcmp(paramName, (const char *)"port"))
+            {   // Read the server port
+                postEmail.ptrParam = postEmail.serverPort;
+                postEmail.paramSize = sizeof(postEmail.serverPort) - 1;
+            }
+            else if(!strcmp(paramName, (const char *)"msg"))
+            {   // Read the server port
+                postEmail.ptrParam = postEmail.mailBody;
+                postEmail.paramSize = sizeof(postEmail.mailBody) - 1;
+                postEmail.mailParamsDone = true;
+            }
+            else
+            {   // unknown parameter
+                postEmail.ptrParam = 0;
+                postEmail.paramSize = 0;
+            }
+
+            // read the parameter now
+            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_EMAIL_READ_PARAM_VALUE);
+            return HTTP_IO_WAITING;
+
+
+        case SM_EMAIL_READ_PARAM_VALUE:
+            // Search for a parameter value in POST data
+            if(TCPIP_HTTP_PostValueRead(connHandle, (uint8_t*)postEmail.ptrParam, postEmail.paramSize) == HTTP_READ_INCOMPLETE)
+                return HTTP_IO_NEED_DATA;
+
+            // end parameter properly
+            postEmail.ptrParam[postEmail.paramSize] = 0;
+
+            // check if we're done with the parameters
+            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, postEmail.mailParamsDone == true ? SM_EMAIL_SEND_MESSAGE : SM_EMAIL_READ_PARAM_NAME);
+            return HTTP_IO_WAITING;
+
+        case SM_EMAIL_SEND_MESSAGE:
+            // prepare the message attachment
+            // output the system status as a CSV file.
+            // Write the header and button strings
+            postEmail.attachLen = sprintf(postEmail.mailAttachment, "SYSTEM STATUS\r\nButtons:,%c,%c,%c\r\n", APP_SWITCH_1StateGet() + '0', APP_SWITCH_2StateGet() + '0', APP_SWITCH_3StateGet() + '0');
+            // Write the header and button strings
+            postEmail.attachLen += sprintf(postEmail.mailAttachment + postEmail.attachLen, "LEDs:,%c,%c,%c\r\n", BSP_LEDStateGet(APP_LED_1) + '0', BSP_LEDStateGet(APP_LED_2) + '0', BSP_LEDStateGet(APP_LED_3) + '0');
+            // add a potentiometer read: a random string
+            postEmail.attachLen += sprintf(postEmail.mailAttachment + postEmail.attachLen, "Pot:,%d\r\n", SYS_RANDOM_PseudoGet());
+
+            // prepare the message itself
+            memset(&mySMTPMessage, 0, sizeof(mySMTPMessage));
+            mySMTPMessage.body = (const uint8_t*)postEmail.mailBody;
+            mySMTPMessage.bodySize = strlen(postEmail.mailBody);
+            mySMTPMessage.smtpServer = postEmail.serverName;
+            mySMTPMessage.serverPort = (uint16_t)atol(postEmail.serverPort);
+            mySMTPMessage.username = postEmail.username;
+            mySMTPMessage.password = postEmail.password;
+            mySMTPMessage.to = postEmail.mailTo;
+            mySMTPMessage.from = "\"SMTP Service\" <mchpboard@picsaregood.com>";
+            mySMTPMessage.subject = "Microchip TCP/IP Stack Status Update";
+
+            // set the buffer attachment
+            postEmail.attachBuffer.attachType = TCPIP_SMTPC_ATTACH_TYPE_TEXT;
+            postEmail.attachBuffer.attachEncode = TCPIP_SMTPC_ENCODE_TYPE_7BIT;
+            postEmail.attachBuffer.attachName = "status.csv";
+            postEmail.attachBuffer.attachBuffer = (const uint8_t*)postEmail.mailAttachment;
+            postEmail.attachBuffer.attachSize = postEmail.attachLen;
+            mySMTPMessage.attachBuffers = &postEmail.attachBuffer;
+            mySMTPMessage.nBuffers = 1;
+            // set the notification function
+            mySMTPMessage.messageCallback = postMailCallback;
+            
+            postMailHandle = TCPIP_SMTPC_MailMessage(&mySMTPMessage, &postEmail.mailRes);
+            if(postMailHandle == 0)
+            {   // failed
+                SYS_CONSOLE_PRINT("SMTPC mail: Failed to submit message: %d!\r\n", postEmail.mailRes);
+            }
+            else
+            {
+                postEmail.mailRes = TCPIP_SMTPC_RES_PENDING;
+                SYS_CONSOLE_MESSAGE("SMTPC mail: Submitted the mail message!\r\n");
+            }
+
+            TCPIP_HTTP_CurrentConnectionPostSmSet(connHandle, SM_EMAIL_WAIT_RESULT);
+            return HTTP_IO_WAITING;
+
+        case SM_EMAIL_WAIT_RESULT:
+            // Wait for status done
+            if(postEmail.mailRes == TCPIP_SMTPC_RES_PENDING)
+            {   // not done yet
+                return HTTP_IO_WAITING;
+            }
+
+            // done
+            postMailHandle = 0;
+
+            if(postEmail.mailRes == TCPIP_SMTPC_RES_OK)
+            {
+                lastSuccess = true;
+            }
+            else
+            {
+                lastFailure = true;
+            }
+
+            // Redirect to the page
+            strcpy((char *)TCPIP_HTTP_CurrentConnectionDataBufferGet(connHandle), "/email/index.htm");
+            TCPIP_HTTP_CurrentConnectionStatusSet(connHandle, HTTP_REDIRECT);
+            return HTTP_IO_DONE;
+    }
+
+    return HTTP_IO_DONE;
+}
+#endif // #if defined(HTTP_APP_USE_EMAIL)
 
 /****************************************************************************
   Function:
@@ -1207,13 +1334,13 @@ void TCPIP_HTTP_Print_btn(HTTP_CONN_HANDLE connHandle, uint16_t num)
     switch(num)
     {
         case 0:
-//            num = APP_SWITCH_1StateGet();
+            num = APP_SWITCH_1StateGet();
             break;
         case 1:
-//            num = APP_SWITCH_2StateGet();
+            num = APP_SWITCH_2StateGet();
             break;
         case 2:
-//            num = APP_SWITCH_3StateGet();
+            num = APP_SWITCH_3StateGet();
             break;
         default:
             num = 0;
@@ -1226,20 +1353,20 @@ void TCPIP_HTTP_Print_btn(HTTP_CONN_HANDLE connHandle, uint16_t num)
 void TCPIP_HTTP_Print_led(HTTP_CONN_HANDLE connHandle, uint16_t num)
 {
     // Determine which LED
-    switch(num)
-    {
-        case 0:
+//    switch(num)
+//    {
+//        case 0:
 //            num = BSP_LEDStateGet(APP_LED_1);
-            break;
-        case 1:
+//            break;
+//        case 1:
 //            num = BSP_LEDStateGet(APP_LED_2);
-            break;
-        case 2:
+//            break;
+//        case 2:
 //            num = BSP_LEDStateGet(APP_LED_3);
-            break;
-        default:
-            num = 0;
-    }
+//            break;
+//        default:
+//            num = 0;
+//    }
 
     // Print the output
     TCPIP_TCP_Put(TCPIP_HTTP_CurrentConnectionSocketGet(connHandle), (num ? '1' : '0'));
@@ -1248,20 +1375,20 @@ void TCPIP_HTTP_Print_led(HTTP_CONN_HANDLE connHandle, uint16_t num)
 void TCPIP_HTTP_Print_ledSelected(HTTP_CONN_HANDLE connHandle, uint16_t num, uint16_t state)
 {
     // Determine which LED to check
-    switch(num)
-    {
-        case 0:
+//    switch(num)
+//    {
+//        case 0:
 //            num = BSP_LEDStateGet(APP_LED_1);
-            break;
-        case 1:
+//            break;
+//        case 1:
 //            num = BSP_LEDStateGet(APP_LED_2);
-            break;
-        case 2:
+//            break;
+//        case 2:
 //            num = BSP_LEDStateGet(APP_LED_3);
-            break;
-        default:
-            num = 0;
-    }
+//            break;
+//        default:
+//            num = 0;
+//    }
 
     // Print output if true and ON or if false and OFF
     if((state && num) || (!state && !num))
@@ -1661,50 +1788,42 @@ void TCPIP_HTTP_Print_write_comm(HTTP_CONN_HANDLE connHandle, uint16_t num)
 #endif
 }
 
-#endif // #if defined(TCPIP_STACK_USE_HTTP_SERVER)
-
-void TCPIP_HTTP_Print_file(HTTP_CONN_HANDLE connHandle){
-    int FilesFound;
-    char Arc[100];
+void TCPIP_HTTP_Print_DirFile(HTTP_CONN_HANDLE connHandle){
     TCP_SOCKET sktHTTP = TCPIP_HTTP_CurrentConnectionSocketGet(connHandle);
     int dDisponibles = TCPIP_TCP_PutIsReady(sktHTTP);
+    char Arg[100];
     
-    if(dDisponibles > 500 && list_count > 0){                                   // Ready to print to web page all the files names
-        TCPIP_TCP_StringPut(sktHTTP, "<b>Archivos Encontrados:</b><br>");
-
-        for(FilesFound = 0; FilesFound < list_count; FilesFound++){
-            PrintWebList();
-            TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)mensaje);
-            sprintf(Arc, "&nbsp;<a href=\x22MUESTRAS/%s\x22>Abrir</a><br>", mensaje);
-            TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)Arc);
+    if(dDisponibles > 500 && EOD == false){                                     // Ready to print to web page all the files names
+        ReciveName();
+        
+        if(DirectoryName[0] != '\0'){
+            sprintf(Arg, "<input type=button value=\x22%s\x22 onclick=SearchDir(\x22%s\x22)>", DirectoryName, DirectoryName);
+            TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)Arg);
         }
-
-        lastSuccess = true;
-
+        TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x01);           
+    }
+    else if (EOD == false){
+        TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x01);           
+    }
+        
+    else if (EOD == true){
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
+        EOD = false;
     }
+}
+
+void TCPIP_HTTP_Print_file(HTTP_CONN_HANDLE connHandle){
     
-    else if(ReadyToPrint == false){                                             // Searching end with no results
-        
-        if(postDateHandle == 0)
-            lastFailure = true;
-        
-        postDateHandle = 1;
-        TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);           
-    }
-    
-    else if (ReadyToPrint == true)                                              // Not ready but continue reading files
-        TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x01);
 }
 
 void TCPIP_HTTP_Print_status_file(HTTP_CONN_HANDLE connHandle){
     TCP_SOCKET sktHTTP = TCPIP_HTTP_CurrentConnectionSocketGet(connHandle);
     
-    if(task == 0 && SendMessage == true){
+    if(task == 0 && DelStatus == true){
             TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)"Archivo Eliminado");
             TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
     }
-    else if(task == 0 && SendMessage == false){
+    else if(task == 0 && DelStatus == false){
         TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)" ");
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
     }
@@ -1712,5 +1831,7 @@ void TCPIP_HTTP_Print_status_file(HTTP_CONN_HANDLE connHandle){
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x01);
     }
     
-    SendMessage = false;
+    DelStatus = false;
 }
+#endif // #if defined(TCPIP_STACK_USE_HTTP_SERVER)
+
