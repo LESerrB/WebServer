@@ -97,15 +97,15 @@ void ReciveName(void){
     stat.lfsize = 300;
     
     switch(filemanagerData.substate){
-        case FILEMANAGER_OPEN_DIRECTORIO:
+        case FILEMANAGER_OPEN_DIRECTORIO:{
             filemanagerData.dirHandle = SYS_FS_DirOpen(DirectoryFiles_path);
 
             if(filemanagerData.dirHandle != SYS_FS_HANDLE_INVALID){             // Directory open is successful
                 filemanagerData.substate = FILEMANAGER_READ_DIRECTORIO;
             }
-        break;
+        }break;
         
-        case FILEMANAGER_READ_DIRECTORIO:
+        case FILEMANAGER_READ_DIRECTORIO:{
             if(SYS_FS_DirRead(filemanagerData.dirHandle, &stat) == SYS_FS_RES_FAILURE)
                 filemanagerData.substate = FILEMANAGER_ERROR;
             else{
@@ -121,7 +121,7 @@ void ReciveName(void){
                     SYS_CONSOLE_PRINT("Archivo: %s\r\n", filemanagerData.DirectoryName);
                 }
             }
-        break;
+        }break;
     }
 }
 
@@ -167,7 +167,6 @@ void FILEMANAGER_Initialize(void){
      * parameters.
      */
 }
-
 
 /******************************************************************************
   Function:
@@ -282,7 +281,7 @@ void FILEMANAGER_Tasks(void){
             if(SYS_FS_DirRead(filemanagerData.dirHandle1, &stat) != SYS_FS_RES_FAILURE){
                 if ((stat.lfname[0] == '\0') && (stat.fname[0] == '\0')){       // Reached the end of the directory.
                     SYS_FS_FileClose(filemanagerData.fileHandle);               // Close the *_Dir.txt file 
-                    SYS_FS_DirClose(filemanagerData.dirHandle1);                // And the Directory
+                    SYS_FS_DirClose(filemanagerData.dirHandle1);                // Close the Directory
                     memset(filemanagerData.DelFile, 0, strlen(filemanagerData.DelFile));
                     filemanagerData.state = FILEMANAGER_STATE_SERVICE_TASKS;
                 }
