@@ -288,9 +288,9 @@ static HTTP_IO_RESULT HTTPDeleteFile(HTTP_CONN_HANDLE connHandle) {
                 break;
             }
             else
-                task = 1;
+                filemanagerData.task = 1;
             
-            strcpy(DelFile, cDest);
+            strcpy(filemanagerData.DelFile, cDest);
             
             // This is the only expected value, so callback is done
             strcpy((char *)httpDataBuff, "/prueba.html");
@@ -1327,27 +1327,27 @@ void TCPIP_HTTP_Print_cookiefav(HTTP_CONN_HANDLE connHandle)
 
 void TCPIP_HTTP_Print_btn(HTTP_CONN_HANDLE connHandle, uint16_t num)
 {
-    const uint8_t HTML_UP_ARROW[] = "up";
-    const uint8_t HTML_DOWN_ARROW[] = "dn";
+//    const uint8_t HTML_UP_ARROW[] = "up";
+//    const uint8_t HTML_DOWN_ARROW[] = "dn";
 
     // Determine which button
-    switch(num)
-    {
-        case 0:
-            num = APP_SWITCH_1StateGet();
-            break;
-        case 1:
-            num = APP_SWITCH_2StateGet();
-            break;
-        case 2:
-            num = APP_SWITCH_3StateGet();
-            break;
-        default:
-            num = 0;
-    }
+//    switch(num)
+//    {
+//        case 0:
+//            num = APP_SWITCH_1StateGet();
+//            break;
+//        case 1:
+//            num = APP_SWITCH_2StateGet();
+//            break;
+//        case 2:
+//            num = APP_SWITCH_3StateGet();
+//            break;
+//        default:
+//            num = 0;
+//    }
 
     // Print the output
-    TCPIP_TCP_StringPut(TCPIP_HTTP_CurrentConnectionSocketGet(connHandle), (num ? HTML_UP_ARROW : HTML_DOWN_ARROW));
+//    TCPIP_TCP_StringPut(TCPIP_HTTP_CurrentConnectionSocketGet(connHandle), (num ? HTML_UP_ARROW : HTML_DOWN_ARROW));
 }
 
 void TCPIP_HTTP_Print_led(HTTP_CONN_HANDLE connHandle, uint16_t num)
@@ -1793,22 +1793,24 @@ void TCPIP_HTTP_Print_DirFile(HTTP_CONN_HANDLE connHandle){
     int dDisponibles = TCPIP_TCP_PutIsReady(sktHTTP);
     char Arg[100];
     
-    if(dDisponibles > 500 && EOD == false){                                     // Ready to print to web page all the files names
+    if(dDisponibles > 500 && filemanagerData.EOD == false){                                     // Ready to print to web page all the files names
         ReciveName();
         
-        if(DirectoryName[0] != '\0'){
-            sprintf(Arg, "<input type=button value=\x22%s\x22 onclick=SearchDir(\x22%s\x22)>", DirectoryName, DirectoryName);
+        if(filemanagerData.DirectoryName[0] != '\0'){
+            sprintf(Arg, "<input type=button value=\x22%s\x22 onclick=SearchDir(\x22%s\x22)>",
+                    filemanagerData.DirectoryName,
+                    filemanagerData.DirectoryName);
             TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)Arg);
         }
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x01);           
     }
-    else if (EOD == false){
+    else if (filemanagerData.EOD == false){
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x01);           
     }
         
-    else if (EOD == true){
+    else if (filemanagerData.EOD == true){
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
-        EOD = false;
+        filemanagerData.EOD = false;
     }
 }
 
@@ -1819,19 +1821,19 @@ void TCPIP_HTTP_Print_file(HTTP_CONN_HANDLE connHandle){
 void TCPIP_HTTP_Print_status_file(HTTP_CONN_HANDLE connHandle){
     TCP_SOCKET sktHTTP = TCPIP_HTTP_CurrentConnectionSocketGet(connHandle);
     
-    if(task == 0 && DelStatus == true){
+    if(filemanagerData.task == 0 && filemanagerData.DelStatus == true){
             TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)"Archivo Eliminado");
             TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
     }
-    else if(task == 0 && DelStatus == false){
+    else if(filemanagerData.task == 0 && filemanagerData.DelStatus == false){
         TCPIP_TCP_StringPut(sktHTTP, (const uint8_t *)" ");
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x00);
     }
-    else if(task != 0){
+    else if(filemanagerData.task != 0){
         TCPIP_HTTP_CurrentConnectionCallbackPosSet(connHandle, 0x01);
     }
     
-    DelStatus = false;
+    filemanagerData.DelStatus = false;
 }
 #endif // #if defined(TCPIP_STACK_USE_HTTP_SERVER)
 

@@ -76,7 +76,6 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
     Application strings and buffers are be defined outside this structure.
 */
 
-FILEMANAGER_DATA filemanagerData;
 SYS_FS_FSTAT stat;
 
 char buffer[32],                                                                // Buffer that stores the mount name of uSD Card
@@ -112,17 +111,27 @@ void ReciveName(void){
             else{
                 // Directory read succeeded.
                 if ((stat.lfname[0] == '\0') && (stat.fname[0] == '\0')){
-                    EOD = true;
-                    memset(DirectoryName, 0, strlen(DirectoryName));
+                    filemanagerData.EOD = true;
+                    memset(filemanagerData.DirectoryName, 0, strlen(filemanagerData.DirectoryName));
                     SYS_FS_DirClose(filemanagerData.dirHandle);
                     filemanagerData.substate = FILEMANAGER_OPEN_DIRECTORIO;
                 }
                 else{
-                    strcpy(DirectoryName, stat.lfname);
-                    SYS_CONSOLE_PRINT("Archivo: %s\r\n", DirectoryName);
+                    strcpy(filemanagerData.DirectoryName, stat.lfname);
+                    SYS_CONSOLE_PRINT("Archivo: %s\r\n", filemanagerData.DirectoryName);
                 }
             }
         break;
+    }
+}
+
+void AddNewFile(char newfilename[50], char dirlocation[50]){
+    sprintf(DirectoryFile, "/Directorio/%s_Dir.txt", dirlocation);
+    filemanagerData.fileHandle = SYS_FS_FileOpen(DirectoryFile, (SYS_FS_FILE_OPEN_APPEND));
+
+    if(filemanagerData.fileHandle != SYS_FS_HANDLE_INVALID){
+        SYS_FS_FilePrintf(filemanagerData.fileHandle, "%s\r\n", newfilename);
+        SYS_FS_DirClose(filemanagerData.fileHandle);
     }
 }
 
@@ -175,7 +184,7 @@ void FILEMANAGER_Tasks(void){
     switch (filemanagerData.state){
         /* OPENS AND CREATES THE "DIRECTORIO" DIRECTORY WITH THE FILES WITH THE
          * NAMES IN EACH DIRECTORY FOUND IN ROOT                                */
-        case FILEMANAGER_STATE_INIT:
+        case FILEMANAGER_STATE_INIT:{
             if (SYS_FS_CurrentDriveGet(buffer) == SYS_FS_RES_SUCCESS){          // Checks if the volume is attached
                 sprintf(DirectoryFiles_path, "%s/Directorio", buffer);
                 filemanagerData.dirHandle = SYS_FS_DirOpen(DirectoryFiles_path);
@@ -189,61 +198,54 @@ void FILEMANAGER_Tasks(void){
                 filemanagerData.dirHandle = SYS_FS_DirOpen(buffer);             // Reads the root to found "MUESTRAS" directories
                 filemanagerData.state = FILEMANAGER_STATE_READ_ROOT;
             }
-        break;
+        }break;
 
-        case FILEMANAGER_STATE_SERVICE_TASKS:
-            switch(task){
-                case 1:
-                    DelStatus = false;
+        case FILEMANAGER_STATE_SERVICE_TASKS:{
+            switch(filemanagerData.task){
+                case 1:{
+                    filemanagerData.DelStatus = false;
                     
-                    if(DelFile[0] != '\0'){
+                    if(filemanagerData.DelFile[0] != '\0'){
                         //sprintf(DirectoryFiles_path, "%s/%s", buffer, DelFile);
                         filemanagerData.state = FILEMANAGER_DELETE_FILE;
                     }
-                break;
-                /* NEW FUNCTION TO TEST*/
-                case 2:
-                    filemanagerData.dirHandle1 = SYS_FS_DirOpen(DirectoryName);
-                    sprintf(DirectoryFile, "/mnt/mchpSite1/Directorio/%s_Dir.txt", DirectoryName);
-                    filemanagerData.fileHandle = SYS_FS_FileOpen(DirectoryFile, (SYS_FS_FILE_OPEN_WRITE));
-                    filemanagerData.state = FILEMANAGER_REWRITE_DIRECTORY;
-                break;
+                }break;
                 
                 default:
                 break;
             }
-        break;
+        }break;
         
         /* CREATES THE FILE THAT CONTAINS ALL THE NAMES IN THE DIRECTORY WIITH 
          * THE SAME NAME                                                        */
-        case FILEMANAGER_STATE_READ_ROOT:
+        case FILEMANAGER_STATE_READ_ROOT:{
             if(filemanagerData.dirHandle != SYS_FS_HANDLE_INVALID){             // Reading the root
                 // Directory open is successful
                 if(SYS_FS_DirRead(filemanagerData.dirHandle, &stat) != SYS_FS_RES_FAILURE){
                 // Directory read succeeded.
                     if ((stat.lfname[0] == '\0') && (stat.fname[0] == '\0')){   // Reached the end of the root
                         if(SYS_FS_DirClose(filemanagerData.dirHandle) != SYS_FS_RES_FAILURE){// Close Handle for root
-                            memset(DirectoryName, 0, strlen(DirectoryName));
+                            memset(filemanagerData.DirectoryName, 0, strlen(filemanagerData.DirectoryName));
                             memset(DirectoryFile, 0, strlen(DirectoryFile));
                             filemanagerData.state = FILEMANAGER_STATE_SERVICE_TASKS;
                         }
                     }
                     else if (stat.lfname[0] == 'M'){                            // Search for a "MUESTRAS" directory in root
-                        strcpy(DirectoryName, stat.lfname);
-                        sprintf(DirectoryFile, "%s/%s_Dir.txt", DirectoryFiles_path, DirectoryName);
+                        strcpy(filemanagerData.DirectoryName, stat.lfname);
+                        sprintf(DirectoryFile, "%s/%s_Dir.txt", DirectoryFiles_path, filemanagerData.DirectoryName);
                         filemanagerData.fileHandle = SYS_FS_FileOpen(DirectoryFile, (SYS_FS_FILE_OPEN_WRITE));
-                        filemanagerData.dirHandle1 = SYS_FS_DirOpen(DirectoryName);
+                        filemanagerData.dirHandle1 = SYS_FS_DirOpen(filemanagerData.DirectoryName);
                         
                         if(SYS_FS_DirRead(filemanagerData.dirHandle1, &stat) != SYS_FS_RES_FAILURE)
                             filemanagerData.state = FILEMANAGER_READ_FILES;
                     }
                 }
             }
-        break;
+        }break;
 
         /* READS THE FILE´S NAME IN THE SELECTED DIRECTORY AND WRITES IN THE FILE 
          * WITH THE SAME NAME                                                   */
-        case FILEMANAGER_READ_FILES:
+        case FILEMANAGER_READ_FILES:{
             // Reads the files in the selected directory to add to the "DIRECTORY" file
             if(SYS_FS_DirRead(filemanagerData.dirHandle1, &stat) != SYS_FS_RES_FAILURE){
                 if ((stat.lfname[0] == '\0') && (stat.fname[0] == '\0')){       // Reached the end of the directory.
@@ -255,40 +257,40 @@ void FILEMANAGER_Tasks(void){
                     SYS_FS_FilePrintf(filemanagerData.fileHandle, "%s\r\n", stat.lfname);
                 }
             }
-        break;
+        }break;
         
         /* DELETES A FILE SELECTED FROM THE WEBPAGE */
-        case FILEMANAGER_DELETE_FILE:
-            if(SYS_FS_FileDirectoryRemove(DelFile) == SYS_FS_RES_FAILURE){
-                DelStatus = false;
+        case FILEMANAGER_DELETE_FILE:{
+            if(SYS_FS_FileDirectoryRemove(filemanagerData.DelFile) == SYS_FS_RES_FAILURE){
+                filemanagerData.DelStatus = false;
             }
             else{
-                strcpy(DirectoryName, strtok(DelFile, "/"));
-                sprintf(DirectoryFile, "/mnt/mchpSite1/Directorio/%s_Dir.txt", DirectoryName);
-                task = 0;
-                DelStatus = true;
+                strcpy(filemanagerData.DirectoryName, strtok(filemanagerData.DelFile, "/"));
+                sprintf(DirectoryFile, "/mnt/mchpSite1/Directorio/%s_Dir.txt", filemanagerData.DirectoryName);
+                filemanagerData.task = 0;
+                filemanagerData.DelStatus = true;
                 
                 filemanagerData.fileHandle = SYS_FS_FileOpen(DirectoryFile, (SYS_FS_FILE_OPEN_WRITE));
-                filemanagerData.dirHandle1 = SYS_FS_DirOpen(DirectoryName);
+                filemanagerData.dirHandle1 = SYS_FS_DirOpen(filemanagerData.DirectoryName);
                 
                 if(SYS_FS_DirRead(filemanagerData.dirHandle1, &stat) != SYS_FS_RES_FAILURE)
                             filemanagerData.state = FILEMANAGER_REWRITE_DIRECTORY;
             }
-        break;
+        }break;
         
-        case FILEMANAGER_REWRITE_DIRECTORY:
+        case FILEMANAGER_REWRITE_DIRECTORY:{
             if(SYS_FS_DirRead(filemanagerData.dirHandle1, &stat) != SYS_FS_RES_FAILURE){
                 if ((stat.lfname[0] == '\0') && (stat.fname[0] == '\0')){       // Reached the end of the directory.
                     SYS_FS_FileClose(filemanagerData.fileHandle);               // Close the *_Dir.txt file 
                     SYS_FS_DirClose(filemanagerData.dirHandle1);                // And the Directory
-                    memset(DelFile, 0, strlen(DelFile));
+                    memset(filemanagerData.DelFile, 0, strlen(filemanagerData.DelFile));
                     filemanagerData.state = FILEMANAGER_STATE_SERVICE_TASKS;
                 }
                 else if(stat.fname[0] != '.'){
                     SYS_FS_FilePrintf(filemanagerData.fileHandle, "%s\r\n", stat.lfname);
                 }
             }            
-        break;
+        }break;
         
         /* The default state should never be executed. */
         case FILEMANAGER_ERROR:

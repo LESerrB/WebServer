@@ -128,6 +128,14 @@ typedef struct
     SYS_FS_HANDLE           fileHandle2;                                        // Handle for the temp directory file to work
     SYS_FS_HANDLE           dirHandle;                                          // Handle for the directory to work
     SYS_FS_HANDLE           dirHandle1;                                         // Handle for the directory to read files
+    
+    int                     task;                                               // Subtask to take an action from webpage
+    
+    char DirectoryName[16],                                                     // Directory name in the uSD Card
+         DelFile[50];                                                           // Name of the file to delete
+
+    bool EOD,                                                                   // Read status of the directory
+         DelStatus;                                                             // Status from the file
 } FILEMANAGER_DATA;
 
 
@@ -211,13 +219,7 @@ void FILEMANAGER_Initialize ( void );
 
 void FILEMANAGER_Tasks(void);
 
-char DirectoryName[16],                                                         // Directory name in the uSD Card
-     DelFile[50];
-
-bool EOD,
-     DelStatus;
-
-int task;
+FILEMANAGER_DATA filemanagerData;
 
 #endif /* _FILEMANAGER_H */
 
