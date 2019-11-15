@@ -29,5 +29,6 @@ nbproject/Makefile-*
 disassembly/
 *.map
 src/MUESTRAS
+*.X
 
 # End of https://www.gitignore.io/api/mplabx
